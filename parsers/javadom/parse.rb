@@ -3,12 +3,12 @@ class Harness
     class Parse
       def prepare_input(xml_stream)
         @parser = Java::JavaxXmlParsers::DocumentBuilderFactory.newInstance.newDocumentBuilder
-        xml_stream.to_inputstream
+        xml_stream
       end
 
       def perform(xml_input)
-        xml_input.reset
-        @parser.parse(xml_input)
+        xml_input.rewind if xml_input.respond_to?(:rewind)
+        @parser.parse(xml_input.to_inputstream)
       end
     end
   end

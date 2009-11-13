@@ -8,7 +8,7 @@ class Harness
       end
 
       def perform(xml_input)
-        xml_input.rewind
+        xml_input.rewind if xml_input.respond_to?(:rewind)
         doc = ::Hpricot.XML(xml_input)
         doc.search("//entry/title/text()").map {|el| el.to_s }
       end

@@ -1,3 +1,5 @@
+require 'stringio'
+
 module DriverHelper
   FIXTURE = File.dirname(__FILE__) + '/fixtures/google-news.xml'
   FIXTURE_CONTENTS = File.read(FIXTURE)
@@ -23,9 +25,8 @@ module DriverHelper
     def initialize(parser)
       super(parser.to_s, parser)
     end
-
     def prepare
-      super(FIXTURE_CONTENTS)
+      super(StringIO.new(FIXTURE_CONTENTS))
     end
   end
 
@@ -40,7 +41,7 @@ module DriverHelper
       tgt = SpecDriver.new(@target.new)
       exp.prepare ; tgt.prepare
       @expected_value = exp.run
-      @target_value = tgt.run
+      @target_value   = tgt.run
       @expected_value == @target_value
     end
 

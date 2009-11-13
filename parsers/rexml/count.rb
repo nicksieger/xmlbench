@@ -8,7 +8,7 @@ class Harness
       end
 
       def perform(xml_input)
-        xml_input.rewind
+        xml_input.rewind if xml_input.respond_to?(:rewind)
         ::REXML::Document.new(xml_input).root.get_elements("//*").size
       end
     end

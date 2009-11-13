@@ -9,7 +9,7 @@ class Harness
       end
 
       def perform(xml_input)
-        xml_input.rewind
+        xml_input.rewind if xml_input.respond_to?(:rewind)
         doc = ::REXML::Document.new(xml_input)
         ::REXML::XPath.match(doc.root, "//atom:entry/atom:title/text()",
                              "atom" => "http://www.w3.org/2005/Atom").map{|e| e.value}

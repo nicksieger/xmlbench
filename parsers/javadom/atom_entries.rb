@@ -18,12 +18,12 @@ class Harness
         end
         @xpath.namespace_context = ns_context
         @expr = @xpath.compile("//atom:entry/atom:title/text()")
-        xml_stream.to_inputstream
+        xml_stream
       end
 
       def perform(xml_input)
-        xml_input.reset
-        nodes = @expr.evaluate(org.xml.sax.InputSource.new(xml_input),
+        xml_input.rewind if xml_input.respond_to?(:rewind)
+        nodes = @expr.evaluate(org.xml.sax.InputSource.new(xml_input.to_inputstream),
                                javax.xml.xpath.XPathConstants::NODESET)
         nodes.map{|e| e.node_value}
       end
