@@ -9,7 +9,7 @@ class Harness
 
       def parse(xml_input)
         doc = ::Nokogiri.XML(xml_input)
-        doc.xpath("//atom:entry/text()", "atom" => "http://www.w3.org/2005/Atom")
+        doc.xpath("//atom:entry/atom:title/text()", "atom" => "http://www.w3.org/2005/Atom").map {|e| e.to_s}
       end
     end
   end

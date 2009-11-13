@@ -19,13 +19,6 @@ class Harness
     end
   end
 
-  module XPathSearch
-    # Given a document object (result from Parse#parse) and an xpath
-    # expression, perform the work of the search on the document.
-    def search(document, xpath)
-    end
-  end
-
   class Driver
     attr_reader :label, :parser
     def initialize(label, parser)
@@ -50,11 +43,39 @@ class Harness
     @num_iterations = num_iterations
   end
 
+  class BenchRun
+    def initialize(iterations)
+      @runs = []
+      @iterations = iterations
+    end
+    def times(&block)
+      @iterations.times do
+        @runs << Benchmark.measure(&block)
+      end
+    end
+    def sum
+      @runs.inject(Benchmark::Tms.new) {|sum,x| sum += x }
+    end
+    def avg
+      sum / @runs.size
+    end
+    def std
+      mean = avg
+      tms = @runs.inject(Benchmark::Tms.new) {|ssq,x| d = mean - x; ssq += d * d} / @runs.size
+      tms = tms.to_a; tms.shift
+      Benchmark::Tms.new(*(tms.map{|x| Math.sqrt(x)}))
+    end
+#     width = args.max {|a,b| a.name <=> b.name }.name.length + @driver.label.length + 7
+#     extra_labels = args.map{|x| "#{@driver.label}: #{x.name}"}
+#     extra_labels = extra_labels.map{|x| "#{x}>avg:"} + extra_labels.map{|x| "#{x}>std:"}
+#     Benchmark.benchmark(" "*width + Benchmark::CAPTION, width, Benchmark::FMTSTR, *extra_labels) do |x|
+  end
+
   def run_bench(*args)
     Benchmark.bmbm do |x|
       args.each do |arg|
         begin
-          @driver.prepare(*([arg].flatten))
+          @driver.prepare(arg)
           x.report(@driver.label + ": " + arg.name) { @num_iterations.times { @driver.run } }
         rescue => e
           puts e.message, *e.backtrace

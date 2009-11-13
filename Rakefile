@@ -32,7 +32,12 @@ task :clean do
 end
 
 desc "Fetch new data"
-task :fetch_data => URLs.keys
+task :check_data => URLs.keys do
+  if defined?(JRUBY_VERSION)
+    require 'jruby'
+    fail "Re-run JRuby with -X+O to enable ObjectSpace (needed for Nokogiri)" unless JRuby.objectspace
+  end
+end
 
 namespace :bench do
   def run_file(f)
@@ -40,7 +45,7 @@ namespace :bench do
   end
 
   desc "Run the benchmarks on all parsers."
-  task :all => :fetch_data do
+  task :all => :check_data do
     FileList['parsers/**/*.rb'].each {|f| run_file(f) }
   end
 
@@ -48,16 +53,23 @@ namespace :bench do
     if File.directory?(dir)
       basename = File.basename(dir)
       desc "Run the #{basename} parser benchmarks."
-      task basename => :fetch_data do
+      task basename => :check_data do
         FileList["#{dir}/**/*.rb"].each {|f| run_file(f) }
       end
     end
   end
 end
 
-task :bench do
+task :bench => :check_data do
   fail "specify parser with PARSERS=parsers/somefile.rb" unless ENV["PARSERS"]
-  FileList[ENV["PARSERS"]].each {|f| run_file(f) }
+  FileList[*(ENV["PARSERS"].split(/\s*,\s*/))].each {|f| run_file(f) }
+end
+
+require 'spec/rake/spectask'
+Spec::Rake::SpecTask.new do |t|
+  t.ruby_opts = ['-rubygems']
+  t.ruby_opts.unshift "-X+O" if defined?(JRUBY_VERSION) # enable objectspace; needed for nokogiri
+  t.spec_files = FileList["spec/**/*_spec.rb"]
 end
 
 task :default do
