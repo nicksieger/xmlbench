@@ -63,7 +63,7 @@ module DriverHelper
   class ShouldBeAnArrayOfStrings
     def matches?(target)
       @target = target
-      Array === target && target.all? {|x| String === x}
+      Array === target && target.size > 0 && target.all? {|x| String === x}
     end
 
     def failure_message
