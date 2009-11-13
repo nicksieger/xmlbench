@@ -5,6 +5,10 @@ if defined?(Harness::JavaDOM)
     it_should_parse_the_same_as(Harness::REXML::AtomEntries)
   end
 
+  describe Harness::JavaDOM::Count do
+    it_should_parse_the_same_as(Harness::REXML::Count)
+  end
+
   describe "Java XML Parsing" do
     it "should parse the titles out of an Atom document" do
       xpath = javax.xml.xpath.XPathFactory.newInstance.newXPath

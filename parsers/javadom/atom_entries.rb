@@ -17,14 +17,14 @@ class Harness
           {"atom" => "http://www.w3.org/2005/Atom"}[prefix]
         end
         @xpath.namespace_context = ns_context
-        Java::JavaIo::ByteArrayInputStream.new(xml_string.to_java_bytes)
+        @expr = @xpath.compile("//atom:entry/atom:title/text()")
+        java.io.ByteArrayInputStream.new(xml_string.to_java_bytes)
       end
 
       def parse(xml_input)
         xml_input.reset
-        nodes = @xpath.evaluate("//atom:entry/atom:title/text()",
-                                org.xml.sax.InputSource.new(xml_input),
-                                javax.xml.xpath.XPathConstants::NODESET)
+        nodes = @expr.evaluate(org.xml.sax.InputSource.new(xml_input),
+                               javax.xml.xpath.XPathConstants::NODESET)
         nodes.map{|e| e.node_value}
       end
     end
