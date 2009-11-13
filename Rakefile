@@ -7,8 +7,8 @@ URLs = {
 #   "data/twitter-timeline.xml" => "http://twitter.com/statuses/public_timeline.xml"
 }
 
-require './harness/harness'
-$LOAD_PATH << "./parsers"
+$LOAD_PATH << "./lib"
+require 'harness'
 
 directory "data"
 
@@ -44,7 +44,7 @@ end
 
 namespace :bench do
   def run_file(f)
-    Harness.run_parser(f =~ %r{parsers/(.*)\.rb} && $1, URLs.keys.sort, ENV['N'] && ENV['N'].to_i)
+    Harness.run_parser(f =~ %r{bench/(.*)\.rb} && $1, URLs.keys.sort, ENV['N'] && ENV['N'].to_i)
   rescue => e
     puts e.message
     if e.message =~ /objectspace/
@@ -56,10 +56,10 @@ namespace :bench do
 
   desc "Run the benchmarks on all parsers."
   task :all => :check_data do
-    FileList['parsers/**/*.rb'].each {|f| run_file(f) }
+    FileList['lib/bench/**/*.rb'].each {|f| run_file(f) }
   end
 
-  Dir['parsers/*'].each do |dir|
+  Dir['lib/bench/*'].each do |dir|
     if File.directory?(dir)
       basename = File.basename(dir)
       desc "Run the #{basename} parser benchmarks."
@@ -71,7 +71,7 @@ namespace :bench do
 end
 
 task :bench => :check_data do
-  fail "specify parser with PARSERS=parsers/somefile.rb" unless ENV["PARSERS"]
+  fail "specify parser with PARSERS=lib/bench/somefile.rb" unless ENV["PARSERS"]
   FileList[*(ENV["PARSERS"].split(/\s*,\s*/))].each {|f| run_file(f) }
 end
 
