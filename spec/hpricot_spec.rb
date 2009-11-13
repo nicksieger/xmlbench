@@ -13,6 +13,16 @@ describe Hpricot do
     document = Hpricot.XML(xml_content)
     elements = document.search("//entry/title/text()")
     titles = elements.map {|el| el.to_s }
+
     titles.should be_an_array_of_strings
   end
+
+  it "should parse the titles out of a stream" do
+    document = Hpricot.XML(xml_stream)
+    elements = document.search("//entry/title/text()")
+    titles = elements.map {|el| el.to_s }
+
+    titles.should be_an_array_of_strings
+  end
+
 end

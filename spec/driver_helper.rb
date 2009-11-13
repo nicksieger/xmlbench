@@ -2,8 +2,21 @@ module DriverHelper
   FIXTURE = File.dirname(__FILE__) + '/fixtures/google-news.xml'
   FIXTURE_CONTENTS = File.read(FIXTURE)
 
+  def included(base)
+    base.after :each do
+      @stream.close if @stream
+    end
+  end
+
   def xml_content
     FIXTURE_CONTENTS
+  end
+
+  def xml_stream
+    unless @stream
+      @stream = File.new(FIXTURE)
+    end
+    @stream
   end
 
   class SpecDriver < Harness::Driver
