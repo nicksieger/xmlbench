@@ -3,8 +3,8 @@ require 'strscan'
 class Harness
   module Strscan
     class Count
-      def prepare_input(xml_string)
-        xml_string
+      def prepare_input(xml_stream)
+        xml_stream.read
       end
 
       def perform(xml_input)

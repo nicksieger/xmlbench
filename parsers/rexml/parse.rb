@@ -3,11 +3,12 @@ require 'rexml/document'
 class Harness
   module REXML
     class Parse
-      def prepare_input(xml_string)
-        xml_string
+      def prepare_input(xml_stream)
+        xml_stream
       end
 
       def perform(xml_input)
+        xml_input.rewind
         ::REXML::Document.new(xml_input)
       end
     end

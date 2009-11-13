@@ -3,11 +3,12 @@ require 'nokogiri'
 class Harness
   module Nokogiri
     class Parse
-      def prepare_input(xml_string)
-        xml_string
+      def prepare_input(xml_stream)
+        xml_stream
       end
 
       def perform(xml_input)
+        xml_input.rewind
         ::Nokogiri.XML(xml_input)
       end
     end

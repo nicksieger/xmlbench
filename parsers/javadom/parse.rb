@@ -1,9 +1,9 @@
 class Harness
   module JavaDOM
     class Parse
-      def prepare_input(xml_string)
+      def prepare_input(xml_stream)
         @parser = Java::JavaxXmlParsers::DocumentBuilderFactory.newInstance.newDocumentBuilder
-        Java::JavaIo::ByteArrayInputStream.new(xml_string.to_java_bytes)
+        xml_stream.to_inputstream
       end
 
       def perform(xml_input)

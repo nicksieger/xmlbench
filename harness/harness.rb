@@ -107,11 +107,11 @@ class Harness
 
   def self.run_parser(parser, files, n)
     docs = files.map do |f|
-      contents = File.read(f)
-      (class << contents; self; end).instance_eval do
+      stream = File.new(f)
+      (class << stream; self; end).instance_eval do
         define_method(:name) { f }
       end
-      contents
+      stream
     end
     args = [parser]; args << n if n
     harness = Harness.create_harness(*args)
@@ -121,5 +121,7 @@ class Harness
     else
       puts "Skipping #{parser}; no suitable driver available on this VM"
     end
+  ensure
+    docs.each {|d| d.close rescue nil }
   end
 end

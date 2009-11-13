@@ -1,10 +1,10 @@
 class Harness
   module JavaDOM
     class Count
-      def prepare_input(xml_string)
+      def prepare_input(xml_stream)
         @xpath = javax.xml.xpath.XPathFactory.newInstance.newXPath
         @expr = @xpath.compile("count(//*)")
-        java.io.ByteArrayInputStream.new(xml_string.to_java_bytes)
+        xml_stream.to_inputstream
       end
 
       def perform(xml_input)

@@ -3,11 +3,12 @@ require 'hpricot'
 class Harness
   module Hpricot
     class Parse
-      def prepare_input(xml_string)
-        xml_string
+      def prepare_input(xml_stream)
+        xml_stream
       end
 
       def perform(xml_input)
+        xml_input.rewind
         ::Hpricot.XML(xml_input)
       end
     end

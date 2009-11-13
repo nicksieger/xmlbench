@@ -10,7 +10,7 @@ end
 class Harness
   module JavaDOM
     class AtomEntries
-      def prepare_input(xml_string)
+      def prepare_input(xml_stream)
         @xpath = javax.xml.xpath.XPathFactory.newInstance.newXPath
         ns_context = Object.new
         def ns_context.getNamespaceURI(prefix)
@@ -18,7 +18,7 @@ class Harness
         end
         @xpath.namespace_context = ns_context
         @expr = @xpath.compile("//atom:entry/atom:title/text()")
-        java.io.ByteArrayInputStream.new(xml_string.to_java_bytes)
+        xml_stream.to_inputstream
       end
 
       def perform(xml_input)
