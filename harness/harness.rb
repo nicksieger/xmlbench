@@ -11,11 +11,11 @@ class Harness
       xml_string
     end
 
-    # Parse the XML input as created by #prepare_input and return the
-    # document or object representation, when applicable. The result
-    # will be handed to XPathSearch#search when performing the xpath
-    # search benchmark.
-    def parse(xml_input)
+    # Perform the benchmark. Parse the XML input as created by
+    # #prepare_input and return the document or object representation,
+    # when applicable. The result will be handed to XPathSearch#search
+    # when performing the xpath search benchmark.
+    def perform(xml_input)
     end
   end
 
@@ -31,7 +31,7 @@ class Harness
     end
 
     def run
-      @parser.parse(@input)
+      @parser.perform(@input)
     end
   end
 

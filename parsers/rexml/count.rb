@@ -7,7 +7,7 @@ class Harness
         xml_string
       end
 
-      def parse(xml_input)
+      def perform(xml_input)
         ::REXML::Document.new(xml_input).root.get_elements("//*").size
       end
     end

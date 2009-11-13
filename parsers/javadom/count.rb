@@ -7,7 +7,7 @@ class Harness
         java.io.ByteArrayInputStream.new(xml_string.to_java_bytes)
       end
 
-      def parse(xml_input)
+      def perform(xml_input)
         xml_input.reset
         @expr.evaluate(org.xml.sax.InputSource.new(xml_input),
                        javax.xml.xpath.XPathConstants::NUMBER)

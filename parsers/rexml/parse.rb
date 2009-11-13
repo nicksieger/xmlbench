@@ -7,12 +7,8 @@ class Harness
         xml_string
       end
 
-      def parse(xml_input)
+      def perform(xml_input)
         ::REXML::Document.new(xml_input)
-      end
-
-      def search(document, xpath)
-        document.root.get_elements(xpath)
       end
     end
   end

@@ -7,7 +7,7 @@ class Harness
         xml_string
       end
 
-      def parse(xml_input)
+      def perform(xml_input)
         ::Nokogiri.XML(xml_input)
       end
     end

@@ -7,12 +7,8 @@ class Harness
         xml_string
       end
 
-      def parse(xml_input)
+      def perform(xml_input)
         ::Hpricot.XML(xml_input)
-      end
-
-      def search(document, xpath)
-        document.search(xpath)
       end
     end
   end

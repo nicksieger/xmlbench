@@ -7,7 +7,7 @@ class Harness
         xml_string
       end
 
-      def parse(xml_input)
+      def perform(xml_input)
         doc = ::Hpricot.XML(xml_input)
         (doc / "//*").select{|el| el.elem?}.size
       end

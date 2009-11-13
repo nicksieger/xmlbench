@@ -6,7 +6,7 @@ class Harness
         Java::JavaIo::ByteArrayInputStream.new(xml_string.to_java_bytes)
       end
 
-      def parse(xml_input)
+      def perform(xml_input)
         xml_input.reset
         @parser.parse(xml_input)
       end

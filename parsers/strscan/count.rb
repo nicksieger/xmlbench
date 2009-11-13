@@ -7,7 +7,7 @@ class Harness
         xml_string
       end
 
-      def parse(xml_input)
+      def perform(xml_input)
         count = 0
         s = StringScanner.new(xml_input)
         while s.scan_until(/<[^\/]/)
