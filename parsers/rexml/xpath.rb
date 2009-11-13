@@ -3,7 +3,7 @@ require 'rexml/xpath'
 
 class Harness
   module REXML
-    class AtomEntries
+    class XPath
       def prepare_input(xml_stream)
         xml_stream
       end
@@ -18,6 +18,6 @@ class Harness
   end
 
   def self.parser
-    Harness::REXML::AtomEntries.new
+    Harness::REXML::XPath.new
   end
 end

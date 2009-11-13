@@ -4,8 +4,8 @@ describe Harness::Hpricot::Count do
   it_should_parse_the_same_as(Harness::REXML::Count)
 end
 
-describe Harness::Hpricot::AtomEntries do
-  it_should_parse_the_same_as(Harness::REXML::AtomEntries)
+describe Harness::Hpricot::XPath do
+  it_should_parse_the_same_as(Harness::REXML::XPath)
 end
 
 describe Hpricot do

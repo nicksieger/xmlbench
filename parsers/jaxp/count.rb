@@ -1,5 +1,5 @@
 class Harness
-  module JavaDOM
+  module JAXP
     class Count
       def prepare_input(xml_stream)
         @xpath = javax.xml.xpath.XPathFactory.newInstance.newXPath
@@ -16,6 +16,6 @@ class Harness
   end
 
   def self.parser
-    Harness::JavaDOM::Count.new
+    Harness::JAXP::Count.new if defined?(JRUBY_VERSION)
   end
 end

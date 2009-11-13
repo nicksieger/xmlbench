@@ -1,15 +1,8 @@
-module org::w3c::dom::NodeList
-  include Enumerable
-  def each
-    0.upto(length - 1) do |i|
-      yield item(i)
-    end
-  end
-end
+require File.dirname(__FILE__) + '/helpers'
 
 class Harness
-  module JavaDOM
-    class AtomEntries
+  module JAXP
+    class XPath
       def prepare_input(xml_stream)
         @xpath = javax.xml.xpath.XPathFactory.newInstance.newXPath
         ns_context = Object.new
@@ -31,6 +24,6 @@ class Harness
   end
 
   def self.parser
-    Harness::JavaDOM::AtomEntries.new
+    Harness::JAXP::XPath.new if defined?(JRUBY_VERSION)
   end
 end

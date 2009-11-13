@@ -2,7 +2,7 @@ require 'nokogiri'
 
 class Harness
   module Nokogiri
-    class AtomEntries
+    class XPath
       def prepare_input(xml_stream)
         xml_stream
       end
@@ -16,6 +16,6 @@ class Harness
   end
 
   def self.parser
-    Harness::Nokogiri::AtomEntries.new
+    Harness::Nokogiri::XPath.new
   end
 end

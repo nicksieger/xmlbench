@@ -31,17 +31,27 @@ task :clean do
   rm_f URLs.keys
 end
 
-desc "Fetch new data"
-task :check_data => URLs.keys do
+def check_objectspace
   if defined?(JRUBY_VERSION)
     require 'jruby'
     fail "Re-run JRuby with -X+O to enable ObjectSpace (needed for Nokogiri)" unless JRuby.objectspace
   end
 end
 
+desc "Fetch new data"
+task :check_data => URLs.keys do
+end
+
 namespace :bench do
   def run_file(f)
     Harness.run_parser(f =~ %r{parsers/(.*)\.rb} && $1, URLs.keys.sort, ENV['N'] && ENV['N'].to_i)
+  rescue => e
+    puts e.message
+    if e.message =~ /objectspace/
+      check_objectspace
+    else
+      raise
+    end
   end
 
   desc "Run the benchmarks on all parsers."

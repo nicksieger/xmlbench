@@ -1,6 +1,8 @@
+require File.dirname(__FILE__) + '/helpers'
+
 class Harness
-  module JavaDOM
-    class Parse
+  module JAXP
+    class DOM
       def prepare_input(xml_stream)
         factory = javax.xml.parsers.DocumentBuilderFactory.newInstance
         factory.namespace_aware = true
@@ -10,12 +12,17 @@ class Harness
 
       def perform(xml_input)
         xml_input.rewind if xml_input.respond_to?(:rewind)
-        @parser.parse(xml_input.to_inputstream)
+        document = @parser.parse(xml_input.to_inputstream)
+        titles = []
+        document.traverse do |elem|
+          titles << elem.text_content if elem.node_name == "title"
+        end
+        titles
       end
     end
   end
 
   def self.parser
-    Harness::JavaDOM::Parse.new if defined?(JRUBY_VERSION)
+    Harness::JAXP::DOM.new if defined?(JRUBY_VERSION)
   end
 end

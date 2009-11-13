@@ -1,11 +1,11 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-if defined?(Harness::JavaDOM)
-  describe Harness::JavaDOM::AtomEntries do
-    it_should_parse_the_same_as(Harness::REXML::AtomEntries)
+if defined?(Harness::JAXP)
+  describe Harness::JAXP::XPath do
+    it_should_parse_the_same_as(Harness::REXML::XPath)
   end
 
-  describe Harness::JavaDOM::Count do
+  describe Harness::JAXP::Count do
     it_should_parse_the_same_as(Harness::REXML::Count)
   end
 
@@ -39,7 +39,7 @@ if defined?(Harness::JavaDOM)
 
     it "should parse the titles by xpathing against a pre-parsed document" do
       # Reuse some code just to get a Java DOM
-      parser = DriverHelper::SpecDriver.new(Harness::JavaDOM::Parse.new)
+      parser = DriverHelper::SpecDriver.new(Harness::JAXP::Parse.new)
       parser.prepare
       document = parser.run
 
@@ -53,18 +53,9 @@ if defined?(Harness::JavaDOM)
       titles.should be_an_array_of_strings
     end
 
-    module org::w3c::dom::Node
-      def traverse(&blk)
-        blk.call(self)
-        child_nodes.each do |e|
-          e.traverse(&blk)
-        end
-      end
-    end
-
     it "should parse the titles by walking a DOM" do
       # Reuse some code just to get a Java DOM
-      parser = DriverHelper::SpecDriver.new(Harness::JavaDOM::Parse.new)
+      parser = DriverHelper::SpecDriver.new(Harness::JAXP::Parse.new)
       parser.prepare
       document = parser.run
 

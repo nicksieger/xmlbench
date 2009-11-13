@@ -4,8 +4,8 @@ describe Harness::Nokogiri::Count do
   it_should_parse_the_same_as(Harness::REXML::Count)
 end
 
-describe Harness::Nokogiri::AtomEntries do
-  it_should_parse_the_same_as(Harness::REXML::AtomEntries)
+describe Harness::Nokogiri::XPath do
+  it_should_parse_the_same_as(Harness::REXML::XPath)
 end
 
 describe Nokogiri do

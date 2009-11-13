@@ -2,7 +2,7 @@ require 'hpricot'
 
 class Harness
   module Hpricot
-    class AtomEntries
+    class XPath
       def prepare_input(xml_stream)
         xml_stream
       end
@@ -16,6 +16,6 @@ class Harness
   end
 
   def self.parser
-    Harness::Hpricot::AtomEntries.new
+    Harness::Hpricot::XPath.new
   end
 end
