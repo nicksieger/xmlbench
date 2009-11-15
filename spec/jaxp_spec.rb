@@ -9,6 +9,25 @@ if defined?(Harness::JAXP)
     it_should_parse_the_same_as(Harness::REXML::Count)
   end
 
+  describe Harness::JAXP::Parse do
+    it "should parse to a DOM" do
+      document = create_driver.run
+      document.should respond_to(:document_element)
+    end
+  end
+
+  describe Harness::JAXP::DOM do
+    it "should parse and navigate a DOM and produce a list of strings" do
+      create_driver.run.should be_an_array_of_strings
+    end
+  end
+
+  describe Harness::JAXP::Stream do
+    it "should read a stream and produce a list of strings" do
+      create_driver.run.should be_an_array_of_strings
+    end
+  end
+
   describe "Java XML Parsing" do
     def xpath
       xpath = javax.xml.xpath.XPathFactory.newInstance.newXPath
@@ -38,10 +57,7 @@ if defined?(Harness::JAXP)
     end
 
     it "should parse the titles by xpathing against a pre-parsed document" do
-      # Reuse some code just to get a Java DOM
-      parser = DriverHelper::SpecDriver.new(Harness::JAXP::Parse.new)
-      parser.prepare
-      document = parser.run
+      document = create_driver(Harness::JAXP::Parse).run
 
       nodes = xpath.evaluate("//atom:entry/atom:title/text()",
                              document, javax.xml.xpath.XPathConstants::NODESET)
@@ -54,10 +70,7 @@ if defined?(Harness::JAXP)
     end
 
     it "should parse the titles by walking a DOM" do
-      # Reuse some code just to get a Java DOM
-      parser = DriverHelper::SpecDriver.new(Harness::JAXP::Parse.new)
-      parser.prepare
-      document = parser.run
+      document = create_driver(Harness::JAXP::Parse).run
 
       titles = []
       document.traverse do |elem|

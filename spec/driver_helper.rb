@@ -30,6 +30,12 @@ module DriverHelper
     end
   end
 
+  def create_driver(klass = nil)
+    driver = SpecDriver.new((klass || description_args.first).new)
+    driver.prepare
+    driver
+  end
+
   class ShouldParseTheSameAs
     def initialize(expected)
       @expected = expected
