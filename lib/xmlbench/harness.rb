@@ -20,7 +20,7 @@ class Harness
   end
 
   class Driver
-    attr_reader :label, :parser
+    attr_reader :label
     def initialize(label, parser)
       @label = label
       if @label =~ /bench\/(.*)/
@@ -29,8 +29,8 @@ class Harness
       @parser = parser
     end
 
-    def prepare(*args)
-      @input = @parser.prepare_input(args[0])
+    def prepare(arg)
+      @input = @parser.prepare_input(arg)
     end
 
     def run
@@ -41,26 +41,24 @@ class Harness
   # Default number of iterations.
   DEFAULT_ITERATIONS = 100
 
-  def initialize(driver, num_iterations)
-    @driver = driver
+  def initialize(drivers, num_iterations)
+    @drivers = drivers
     @num_iterations = num_iterations
   end
 
   def run_bench(*args)
     Benchmark.bmbm do |x|
-      args.each do |arg|
-        begin
-          @driver.prepare(arg)
-          x.report(@driver.label + ": " + arg.name) { @num_iterations.times { @driver.run } }
-        rescue => e
-          puts e.message, *e.backtrace
+      @drivers.each do |driver|
+        args.each do |arg|
+          begin
+            driver.prepare(arg)
+            x.report(driver.label + ": " + arg.path) { @num_iterations.times { driver.run } }
+          rescue => e
+            puts e.message, *e.backtrace
+          end
         end
       end
     end
-  end
-
-  def runnable?
-    @driver.parser
   end
 
   # Redefine this method in specific parser code to create a parser.
@@ -74,30 +72,26 @@ class Harness
   def self.parser
   end
 
-  def self.create_harness(parser_name, num_iterations = DEFAULT_ITERATIONS)
-    load "#{parser_name}.rb"
-    driver = Driver.new(parser_name, parser)
-    new(driver, num_iterations)
+  def self.create_harness(parsers, num_iterations = nil)
+    num_iterations ||= DEFAULT_ITERATIONS
+    drivers = parsers.map do |parser_name|
+      load "#{parser_name}.rb"
+      parser
+      if p = parser
+        Driver.new(parser_name, p)
+      else
+        puts "Skipping #{parser_name}; no suitable driver available on this VM"
+      end
+    end.compact
+    new(drivers, num_iterations)
   end
 
   # Run the parser 'n' times on the given list of files.
-  def self.run_parser(parser, files, n)
-    docs = files.map do |f|
-      stream = File.new(f)
-      (class << stream; self; end).instance_eval do
-        define_method(:name) { f }
-      end
-      stream
-    end
-    args = [parser]; args << n if n
-    harness = Harness.create_harness(*args)
-    if harness.runnable?
-      puts "Running #{parser}"
-      harness.run_bench(*docs)
-    else
-      puts "Skipping #{parser}; no suitable driver available on this VM"
-    end
-#   ensure
-#     docs.each {|d| d.close rescue nil }
+  def self.run_parsers(parsers, files, n)
+    docs = files.map { |f| File.new(f) }
+    harness = Harness.create_harness(parsers, n)
+    harness.run_bench(*docs)
+  ensure
+    docs.each {|d| d.close rescue nil }
   end
 end
