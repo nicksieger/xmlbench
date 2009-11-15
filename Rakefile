@@ -8,7 +8,7 @@ URLs = {
 }
 
 $LOAD_PATH << "./lib"
-require 'harness'
+require 'xmlbench/harness'
 
 directory "data"
 
@@ -39,15 +39,14 @@ def check_objectspace
 end
 
 desc "Fetch new data"
-task :check_data => URLs.keys do
-end
+task :check_data => URLs.keys
 
 namespace :bench do
   def run_file(f)
-    Harness.run_parser(f =~ %r{bench/(.*)\.rb} && $1, URLs.keys.sort, ENV['N'] && ENV['N'].to_i)
+    Harness.run_parser(f =~ %r{(xmlbench/.*)\.rb} && $1, URLs.keys.sort, ENV['N'] && ENV['N'].to_i)
   rescue => e
     puts e.message
-    if e.message =~ /objectspace/
+    if e.message =~ /undefined method/
       check_objectspace
     else
       raise
@@ -56,10 +55,10 @@ namespace :bench do
 
   desc "Run the benchmarks on all parsers."
   task :all => :check_data do
-    FileList['lib/bench/**/*.rb'].each {|f| run_file(f) }
+    FileList['lib/xmlbench/**/*.rb'].each {|f| run_file(f) }
   end
 
-  Dir['lib/bench/*'].each do |dir|
+  Dir['lib/xmlbench/*'].each do |dir|
     if File.directory?(dir)
       basename = File.basename(dir)
       desc "Run the #{basename} parser benchmarks."
@@ -71,8 +70,8 @@ namespace :bench do
 end
 
 task :bench => :check_data do
-  fail "specify parser with PARSERS=lib/bench/somefile.rb" unless ENV["PARSERS"]
-  FileList[*(ENV["PARSERS"].split(/\s*,\s*/))].each {|f| run_file(f) }
+  fail "specify parser with PARSERS=lib/xmlbench/somefile.rb" unless ENV["BENCH"]
+  FileList[*(ENV["BENCH"].split(/\s*,\s*/))].each {|f| run_file(f) }
 end
 
 require 'spec/rake/spectask'

@@ -23,6 +23,9 @@ class Harness
     attr_reader :label, :parser
     def initialize(label, parser)
       @label = label
+      if @label =~ /bench\/(.*)/
+        @label = $1
+      end
       @parser = parser
     end
 
@@ -41,34 +44,6 @@ class Harness
   def initialize(driver, num_iterations)
     @driver = driver
     @num_iterations = num_iterations
-  end
-
-  class BenchRun
-    def initialize(iterations)
-      @runs = []
-      @iterations = iterations
-    end
-    def times(&block)
-      @iterations.times do
-        @runs << Benchmark.measure(&block)
-      end
-    end
-    def sum
-      @runs.inject(Benchmark::Tms.new) {|sum,x| sum += x }
-    end
-    def avg
-      sum / @runs.size
-    end
-    def std
-      mean = avg
-      tms = @runs.inject(Benchmark::Tms.new) {|ssq,x| d = mean - x; ssq += d * d} / @runs.size
-      tms = tms.to_a; tms.shift
-      Benchmark::Tms.new(*(tms.map{|x| Math.sqrt(x)}))
-    end
-#     width = args.max {|a,b| a.name <=> b.name }.name.length + @driver.label.length + 7
-#     extra_labels = args.map{|x| "#{@driver.label}: #{x.name}"}
-#     extra_labels = extra_labels.map{|x| "#{x}>avg:"} + extra_labels.map{|x| "#{x}>std:"}
-#     Benchmark.benchmark(" "*width + Benchmark::CAPTION, width, Benchmark::FMTSTR, *extra_labels) do |x|
   end
 
   def run_bench(*args)
@@ -105,6 +80,7 @@ class Harness
     new(driver, num_iterations)
   end
 
+  # Run the parser 'n' times on the given list of files.
   def self.run_parser(parser, files, n)
     docs = files.map do |f|
       stream = File.new(f)
@@ -121,7 +97,7 @@ class Harness
     else
       puts "Skipping #{parser}; no suitable driver available on this VM"
     end
-  ensure
-    docs.each {|d| d.close rescue nil }
+#   ensure
+#     docs.each {|d| d.close rescue nil }
   end
 end

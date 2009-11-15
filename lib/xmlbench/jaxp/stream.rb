@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/helpers'
+require 'xmlbench/java_helpers'
 
 class Harness
   module JAXP
