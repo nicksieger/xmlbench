@@ -73,7 +73,7 @@ end
 
 require 'spec/rake/spectask'
 Spec::Rake::SpecTask.new do |t|
-  t.ruby_opts = ['-rubygems']
+  t.ruby_opts = ['-Ilib', '-rubygems']
   t.ruby_opts.unshift "-X+O" if defined?(JRUBY_VERSION) # enable objectspace; needed for nokogiri
   t.spec_files = FileList["spec/**/*_spec.rb"]
 end
