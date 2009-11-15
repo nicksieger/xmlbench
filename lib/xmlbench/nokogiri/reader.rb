@@ -3,12 +3,7 @@ require 'nokogiri'
 class Harness
   module Nokogiri
     class XPath
-      def prepare_input(xml_stream)
-        xml_stream
-      end
-
       def perform(xml_input)
-        xml_input.rewind if xml_input.respond_to?(:rewind)
         reader = ::Nokogiri::XML::Reader(xml_input)
         titles = []
         text = ''

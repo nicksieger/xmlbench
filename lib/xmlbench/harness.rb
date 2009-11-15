@@ -2,7 +2,7 @@ require 'benchmark'
 
 class Harness
   module Parser
-    # Convert a Ruby stream into a possibly more efficient
+    # (Optional) Convert a Ruby stream into a possibly more efficient
     # representation for parsing. For example, Java XML parsers are
     # more likley to work with Java input streams or Java strings. The
     # benchmark is for measuring parsing speed, not input conversion
@@ -11,10 +11,10 @@ class Harness
       xml_string
     end
 
-    # Perform the benchmark. Parse the XML input as created by
-    # #prepare_input and return the document or object representation,
-    # when applicable. The result will be handed to XPathSearch#search
-    # when performing the xpath search benchmark.
+    # Perform the work to be benchmarked. Parse the XML input as
+    # created by #prepare_input and return the document or object
+    # representation, when applicable. The result will be handed to
+    # XPathSearch#search when performing the xpath search benchmark.
     def perform(xml_input)
     end
   end
@@ -23,14 +23,13 @@ class Harness
     attr_reader :label
     def initialize(label, parser)
       @label = label
-      if @label =~ /bench\/(.*)/
-        @label = $1
-      end
+      @label = $1 if @label =~ /bench\/(.*)/
       @parser = parser
     end
 
     def prepare(arg)
-      @input = @parser.prepare_input(arg)
+      @input = arg
+      @input = @parser.prepare_input(arg) if @parser.respond_to?(:prepare_input)
     end
 
     def run
@@ -46,13 +45,14 @@ class Harness
     @num_iterations = num_iterations
   end
 
-  def run_bench(*args)
-    Benchmark.bmbm do |x|
-      @drivers.each do |driver|
-        args.each do |arg|
+  def run_bench(files)
+    Benchmark.bmbm do |bm|
+      files.each do |file|
+        @drivers.each do |driver|
           begin
-            driver.prepare(arg)
-            x.report(driver.label + ": " + arg.path) { @num_iterations.times { driver.run } }
+            file.rewind
+            driver.prepare(file)
+            bm.report(driver.label + ": " + file.path) { @num_iterations.times { file.rewind; driver.run } }
           rescue => e
             puts e.message, *e.backtrace
           end
@@ -76,7 +76,6 @@ class Harness
     num_iterations ||= DEFAULT_ITERATIONS
     drivers = parsers.map do |parser_name|
       load "#{parser_name}.rb"
-      parser
       if p = parser
         Driver.new(parser_name, p)
       else
@@ -87,11 +86,11 @@ class Harness
   end
 
   # Run the parser 'n' times on the given list of files.
-  def self.run_parsers(parsers, files, n)
-    docs = files.map { |f| File.new(f) }
+  def self.run_parsers(parsers, paths, n)
+    files = paths.map { |f| File.new(f) }
     harness = Harness.create_harness(parsers, n)
-    harness.run_bench(*docs)
+    harness.run_bench(files)
   ensure
-    docs.each {|d| d.close rescue nil }
+    files.each {|f| f.close rescue nil }
   end
 end

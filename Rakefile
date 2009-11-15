@@ -1,6 +1,6 @@
 
 URLs = {
-  "data/google-news.xml" => "http://news.google.com/?output=atom",
+#   "data/google-news.xml" => "http://news.google.com/?output=atom",
   "data/twitter-search.xml" => "http://search.twitter.com/search.atom?lang=en&q=xml&rpp=100",
 # Leave out Twitter timeline for now, as we can build benchmarks
 # around assumption of atom-formatted documents
@@ -9,20 +9,16 @@ URLs = {
 
 $LOAD_PATH << "./lib"
 require 'xmlbench/harness'
+require 'open-uri'
 
 directory "data"
 
 rule ".xml" => "data" do |t|
   fail "Don't know URL where I can fetch #{t.name}!" unless URLs[t.name]
-  require 'net/http'
-  url = URI.parse(URLs[t.name])
-  puts "fetching #{url}..."
-  res = Net::HTTP.start(url.host, url.port) do |http|
-    http.get(url.request_uri)
-  end
-  res.error! unless Net::HTTPSuccess === res
   File.open(t.name, "w") do |f|
-    f << res.body
+    open(URLs[t.name]) do |url|
+      f << url.read
+    end
   end
 end
 
