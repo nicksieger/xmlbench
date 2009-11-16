@@ -1,3 +1,5 @@
+require 'xmlbench/java_helpers'
+
 class Harness
   module JAXP
     class Parse
@@ -5,10 +7,11 @@ class Harness
         factory = javax.xml.parsers.DocumentBuilderFactory.newInstance
         factory.namespace_aware = true
         @parser = factory.newDocumentBuilder
-        xml_stream.to_inputstream
+        xml_stream.to_bytearray_inputstream
       end
 
       def perform(xml_input)
+        xml_input.reset
         @parser.parse(xml_input)
       end
     end

@@ -1,4 +1,7 @@
 require 'stringio'
+class StringIO
+  include ToByteArrayInputStream if defined?(ToByteArrayInputStream)
+end
 
 module DriverHelper
   FIXTURE = File.dirname(__FILE__) + '/fixtures/google-news.xml'

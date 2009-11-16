@@ -16,4 +16,14 @@ module org::w3c::dom::Node
     end
   end
 end
+
+module ToByteArrayInputStream
+  def to_bytearray_inputstream
+    java.io.ByteArrayInputStream.new(read.to_java_bytes)
+  end
+end
+
+class IO
+  include ToByteArrayInputStream
+end
 end

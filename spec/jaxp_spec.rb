@@ -14,6 +14,10 @@ if defined?(Harness::JAXP)
       document = create_driver.run
       document.should respond_to(:document_element)
     end
+
+    it "should parse multiple times as part of a benchmark harness" do
+      Harness.run_parsers(["xmlbench/jaxp/parse"], [DriverHelper::FIXTURE], 2)
+    end
   end
 
   describe Harness::JAXP::DOM do

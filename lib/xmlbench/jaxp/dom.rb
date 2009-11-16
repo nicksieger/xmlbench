@@ -7,10 +7,11 @@ class Harness
         factory = javax.xml.parsers.DocumentBuilderFactory.newInstance
         factory.namespace_aware = true
         @parser = factory.newDocumentBuilder
-        xml_stream.to_inputstream
+        xml_stream.to_bytearray_inputstream
       end
 
       def perform(xml_input)
+        xml_input.reset
         document = @parser.parse(xml_input)
         titles = []
         document.traverse do |elem|

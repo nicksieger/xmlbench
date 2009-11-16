@@ -5,10 +5,11 @@ class Harness
     class Stream
       def prepare_input(xml_stream)
         @factory = javax.xml.stream.XMLInputFactory.newInstance
-        xml_stream.to_inputstream
+        xml_stream.to_bytearray_inputstream
       end
 
       def perform(xml_input)
+        xml_input.reset
         reader = @factory.createXMLStreamReader(xml_input)
         titles = []
         text = ''
