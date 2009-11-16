@@ -1,4 +1,5 @@
 require 'benchmark'
+require 'stringio'
 
 class Harness
   module Parser
@@ -43,16 +44,18 @@ class Harness
   def initialize(drivers, num_iterations)
     @drivers = drivers
     @num_iterations = num_iterations
+    @in_memory = true           # set to false to do streaming tests
   end
 
   def run_bench(files)
     Benchmark.bmbm do |bm|
       files.each do |file|
+        stream = @in_memory ? StringIO.new(file.read) : file
         @drivers.each do |driver|
           begin
-            file.rewind
-            driver.prepare(file)
-            bm.report(driver.label + ": " + file.path) { @num_iterations.times { file.rewind; driver.run } }
+            stream.rewind
+            driver.prepare(stream)
+            bm.report(driver.label + ": " + file.path) { @num_iterations.times { stream.rewind; driver.run } }
           rescue => e
             puts e.message, *e.backtrace
           end

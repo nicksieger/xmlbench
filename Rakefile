@@ -52,7 +52,7 @@ namespace :bench do
 
   desc "Run the benchmarks on all parsers."
   task :all => :check_data do
-    run_files(FileList['lib/xmlbench/**/*.rb'])
+    run_files(FileList['lib/xmlbench/*/**/*.rb'])
   end
 
   Dir['lib/xmlbench/*'].each do |dir|

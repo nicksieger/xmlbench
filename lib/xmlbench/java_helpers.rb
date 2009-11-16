@@ -26,4 +26,9 @@ end
 class IO
   include ToByteArrayInputStream
 end
+
+require 'stringio'
+class StringIO
+  include ToByteArrayInputStream
+end
 end
