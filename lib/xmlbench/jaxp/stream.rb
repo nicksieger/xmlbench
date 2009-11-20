@@ -34,6 +34,7 @@ class Harness
   end
 
   def self.parser
-    Harness::JAXP::Stream.new if defined?(JRUBY_VERSION)
+    factory_available = javax.xml.stream.XMLInputFactory rescue nil
+    Harness::JAXP::Stream.new if factory_available
   end
 end
