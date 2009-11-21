@@ -1,7 +1,7 @@
 These benchmarks were written for the article "XML Parsing in Ruby" on
 the Engine Yard blog.
 
-http://engineyard.com/blog/...
+http://www.engineyard.com/blog/2009/xml-parsing-in-ruby/
 
 ## Usage
 
